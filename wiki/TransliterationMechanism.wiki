@@ -1,0 +1,9 @@
+#summary Internals of the transliteration mechanism
+
+The transliteration process is done in three steps. First step is preprocessing. It is used to replace entities that are not 1:1 eg. with that you can replace whole words before main processing takes place.
+
+Second step is the transliteration of single characters, and a workhorse for the transliteration itself. It will copy all the characters from the replacement string over corresponding characters from source string. It is pretty straightforward, so no further explanation is necessary.
+
+Last step is postprocessing. Once we have done the majority of the transliteration, there might still be some characters left to change. That can be done with postprocessing. For instance, when converting from latin to cyrillic, we have to make sure that all html entities (&nbsp; for instance) are left intact. That can be achieved by putting &нбсп; pattern and &nbsp; replacement in postprocessing option (options.maps.map_name.multiPost).
+
+Plugin will take the element it is called upon. From there it will iteratively scan all child nodes for eventual text content and replace that content with transliterated one. Html attributes and tags themselves are left unchanged. You can transliterate a single element or whole page by invoking the plugin on body element.

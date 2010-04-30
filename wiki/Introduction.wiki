@@ -25,4 +25,4 @@ The plugin was tested with jQuery 1.3.2+ in following browsers:
 
 If anyone tests it on macintosh browsers, please contact me with results.
 
-Usage is pretty simple. First of all, you need to include the script file in your page <HEAD> section. You have to define your own map for transliteration or use one of the maps plugin comes with. When done, you should simply call the transliterator on the given element(s) with desired set of options. For details, check the Usage page.
+Usage is pretty simple. First of all, you need to include the script file in your page `<HEAD>` section. You have to define your own map for transliteration or use one of the maps plugin comes with. When done, you should simply call the transliterator on the given element(s) with desired set of options. For details, check the Usage page.

@@ -1,7 +1,7 @@
 #summary An introduction to jquery.transliterate plugin
 #labels Featured
 
-= Introduction =
+= Jquery transliteration plugin =
 
 Jquery transliterate plugin is a small fast solution for on-the-fly transliteration on the client side. It was originally designed to be used with Serbian language, but through its options, it can be widely used for any type of transliteration, even for low-security encryption to avoid web spiders.
 

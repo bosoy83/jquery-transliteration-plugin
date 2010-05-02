@@ -13,7 +13,7 @@
         return this.each(function() {
             var count = this.childNodes.length;
             if (isEligible(this)){
-                if (count){
+                if (count && $(this).attr('tagName').toLowerCase() != 'textarea'){
                     while (count--) {
                         var node = this.childNodes[count];
                         if (node.nodeType === 1) {

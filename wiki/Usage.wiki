@@ -1,12 +1,11 @@
 #summary Usage of the jquery.translitartaion plugin
 #labels Featured,Phase-Implementation
 
-= Introduction =
-
+= Usage =
 
 === Required files ===
 
-To use the plugin, you should forst include it on your page, in the *head* section:
+To use the plugin, you should first include it on your page, in the *head* section:
 
 {{{
 <script type="text/javascript" src="http://mydomain.com/js/jquery-1.4.2-min.js"> </script>
@@ -35,7 +34,7 @@ Default set of options for the plugin is:
         multiPost : [['\u0459', '\u045a', '\u0409', '\u040a', '\u045f', '\u040f'], ['lj', 'nj', 'Lj', 'Nj', 'Dž', 'Dž']]
       },
       yu2ascii : {
-        charMap : [fromChars = 'абцдефгхијклмнопрстувзшђжчћАБЦДЕФГХИЈКЛМНОПРСТУВЗШЂЖЧЋabcdefghijklmnoprstuvzšđžčćABCDEFGHIJKLMNOPRSTUVZŠĐŽČĆ',
+        charMap : ['абцдефгхијклмнопрстувзшђжчћАБЦДЕФГХИЈКЛМНОПРСТУВЗШЂЖЧЋabcdefghijklmnoprstuvzšđžčćABCDEFGHIJKLMNOPRSTUVZŠĐŽČĆ',
 'abcdefghijklmnoprstuvzsđzccABCDEFGHIJKLMNOPRSTUVZSĐZCCabcdefghijklmnoprstuvzsđzccABCDEFGHIJKLMNOPRSTUVZSĐZCC'],
         multiPre : [[], []],
         multiPost : [['\u0459', '\u045a', '\u0409', '\u040a', '\u045f', '\u040f', 'đ', 'Đ'], ['lj', 'nj', 'Lj', 'Nj', 'Dž', 'Dž', 'dj', 'Dj']]

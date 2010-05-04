@@ -1,5 +1,4 @@
 /**
- *
  * @description jQuery transliterate plugin
  * @license MIT <http://opensource.org/licenses/mit-license.php>
  * @author Dino Ivankov <dinoivankov@gmail.com>
@@ -13,7 +12,7 @@
         return this.each(function() {
             var count = this.childNodes.length;
             if (isEligible(this)){
-                if (count && $(this).attr('tagName').toLowerCase() != 'textarea'){
+                if (count && $(this).attr('tagName').toLowerCase() != 'textarea'){ // textarea exception - although textarea has innerHTML we should rather set its value, so if it's only element passed to the constructor, it will be treated as empty and val() will be transliterated'
                     while (count--) {
                         var node = this.childNodes[count];
                         if (node.nodeType === 1) {
@@ -32,9 +31,11 @@
             };
         });
         /**
-         * Takes element or tagName string as the param, checks against the exclude lists and returns false if element is not to be transliterated.
+         * Takes element or tagName string as the param, checks against the
+         * exclude lists and returns false if element is not to be transliterated.
          * @param mixed el
          * @return boolean
+         * @todo add classname, id
          */
         function isEligible(el){
             var result = true;
@@ -57,22 +58,16 @@
          * @return String transliterated text
          */
         function transliterateText(text){
-            text = new String(text);
-            if (text){
+            var _text = new String(text);
+            if (_text){
                 /*
-                 * preprocessing - performing all multi-char replacements before 1:1 transliteration based on options
+                 * preprocessing - performing all multi-char replacements
+                 * before 1:1 transliteration based on options
                  */
-                var regexes = options.maps[options.direction].multiPre;
-                if (regexes[0]){
-                    for(i=0;i<regexes[0].length;i++){
-                        var regex = new RegExp(regexes[0][i]);
-                        while(regex.test(text)){
-                            text = text.replace(regex, regexes[1][i]);
-                        };
-                    };
-                };
+                _text = multiReplace(_text, options.maps[options.direction].multiPre);
                 /*
-                 * 1:! transliteration - transliterating the text using character maps supplied in options
+                 * 1:1 transliteration - transliterating the text using
+                 * character maps supplied in options
                  */
                 var fromChars = options.maps[options.direction].charMap[0].split('');
                 var toChars = options.maps[options.direction].charMap[1].split('');
@@ -82,7 +77,7 @@
                     charMap[fromChars[i]] = c;
                 };
                 var re = new RegExp(fromChars.join("|"), "g");
-                text = text.replace(re, function(c) {
+                _text = _text.replace(re, function(c) {
                     if (charMap[c]){
                         return charMap[c];
                     } else {
@@ -91,20 +86,34 @@
                 });
 
                 /*
-                 * postrocessing - performing all multi-char replacements after 1:1 transliteration based on options
+                 * postrocessing - performing all multi-char replacements after
+                 * 1:1 transliteration based on options
                  */
-                regexes = options.maps[options.direction].multiPost;
-                if (regexes[0]){
-                    for(i=0;i<regexes[0].length;i++){
-                        regex = new RegExp(regexes[0][i]);
-                        while(regex.test(text)){
-                            text = text.replace(regex, regexes[1][i]);
-                        };
+                _text = multiReplace(_text, options.maps[options.direction].multiPost);
+            };
+            return _text;
+        };
+        /**
+         * multiReplace - replaces all occurrences of all present elements of
+         * multiMap[0] with multiMap[1] in a string and returns the string
+         * WARNING multiMap element that is replaced CAN'T be contained in
+         * replacement, it will cause infinite while loop
+         * @param String text
+         * @param Array[][] multiMap
+         * @todo fix while infinite loop problem
+         */
+        function multiReplace(text, multiMap){
+            if (multiMap[0]){
+                var len = multiMap[0].length;
+                for(i=0;i<len;i++){
+                    var regex = new RegExp(multiMap[0][i]);
+                    while(regex.test(text)){
+                        text = text.replace(regex, multiMap[1][i]);
                     };
                 };
             };
             return text;
-        };
+        }
     };
     /**
      * default option set for transliterate plugin

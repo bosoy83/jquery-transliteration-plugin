@@ -1,4 +1,4 @@
-#summary Usage of the jquery.translitartaion plugin
+#summary Usage of the jquery.transliteration plugin
 #labels Featured,Phase-Implementation
 
 = Usage =

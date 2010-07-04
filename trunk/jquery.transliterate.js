@@ -2,7 +2,7 @@
  * @description jQuery transliterate plugin
  * @license MIT <http://opensource.org/licenses/mit-license.php>
  * @author Dino Ivankov <dinoivankov@gmail.com>
- * @version 1.0
+ * @version 1.1
  * http://code.google.com/p/jquery-transliteration-plugin/
  */
 ;
@@ -18,6 +18,9 @@
                         if (node.nodeType === 1) {
                             $(node).transliterate(options);
                         } else if (node.data){
+                            if (!$(node).data('tempReplacements')){
+                                $(node).data('tempReplacements', []);
+                            }
                             node.data = transliterateText(node.data);
                         };
                     };
@@ -29,91 +32,130 @@
                     };
                 };
             };
-        });
-        /**
-         * Takes element or tagName string as the param, checks against the
-         * exclude lists and returns false if element is not to be transliterated.
-         * @param mixed el
-         * @return boolean
-         * @todo add classname, id
-         */
-        function isEligible(el){
-            var result = true;
-            var tag;
-            if (typeof el != "string"){
-                tag = $(el).attr('tagName').toLowerCase();
-            } else {
-                tag = el.toLowerCase();
-            }
-            for(var i=0;i<options.excludes.length;i++){
-                if (options.excludes[i] == tag){
-                    result = false;
+            /**
+             * Takes element or tagName string as the param, checks against the
+             * exclude lists and returns false if element is not to be transliterated.
+             * @param mixed el
+             * @return boolean
+             * @todo add classname, id
+             */
+            function isEligible(el){
+                var result = true;
+                var tag;
+                if (typeof el != "string"){
+                    tag = $(el).attr('tagName').toLowerCase();
+                } else {
+                    tag = el.toLowerCase();
                 }
-            }
-            return result;
-        };
-        /**
-         * Takes text string as parameter and transliterates it based on set options
-         * @param String text
-         * @return String transliterated text
-         */
-        function transliterateText(text){
-            var _text = new String(text);
-            if (_text){
-                /*
+                for(var i=0;i<options.excludes.length;i++){
+                    if (options.excludes[i] == tag){
+                        result = false;
+                    }
+                }
+                return result;
+            };
+            /**
+             * Takes text string as parameter and transliterates it based on set options
+             * @param String text
+             * @return String transliterated text
+             */
+            function transliterateText(text){
+                var _text = new String(text);
+                if (_text){
+                    /*
                  * preprocessing - performing all multi-char replacements
                  * before 1:1 transliteration based on options
                  */
-                _text = multiReplace(_text, options.maps[options.direction].multiPre);
-                /*
+                    _text = multiReplace(_text, options.maps[options.direction].multiPre);
+                    /*
                  * 1:1 transliteration - transliterating the text using
                  * character maps supplied in options
                  */
-                var fromChars = options.maps[options.direction].charMap[0].split('');
-                var toChars = options.maps[options.direction].charMap[1].split('');
-                var charMap = {};
-                for(var i = 0; i < fromChars.length; i++) {
-                    var c = i < toChars.length ? toChars[i] : fromChars[i];
-                    charMap[fromChars[i]] = c;
-                };
-                var re = new RegExp(fromChars.join("|"), "g");
-                _text = _text.replace(re, function(c) {
-                    if (charMap[c]){
-                        return charMap[c];
-                    } else {
-                        return c;
-                    };
-                });
+                    _text = charTransliteration(_text);
 
-                /*
+                    /*
                  * postrocessing - performing all multi-char replacements after
                  * 1:1 transliteration based on options
                  */
-                _text = multiReplace(_text, options.maps[options.direction].multiPost);
+                    _text = multiReplace(_text, options.maps[options.direction].multiPost);
+                };
+                return _text;
             };
-            return _text;
-        };
-        /**
-         * multiReplace - replaces all occurrences of all present elements of
-         * multiMap[0] with multiMap[1] in a string and returns the string
-         * WARNING multiMap element that is replaced CAN'T be contained in
-         * replacement, it will cause infinite while loop
-         * @param String text
-         * @param Array[][] multiMap
-         * @todo fix while infinite loop problem
-         */
-        function multiReplace(text, multiMap){
-            if (multiMap[0]){
-                var len = multiMap[0].length;
-                for(i=0;i<len;i++){
-                    var regex = new RegExp(multiMap[0][i]);
-                    while(regex.test(text)){
-                        text = text.replace(regex, multiMap[1][i]);
+            /**
+             * Transliterates char to char using charmap
+             * @param String text
+             * @return String
+             */
+            function charTransliteration(text){
+                var _text = new String(text);
+                if (_text){
+                    var fromChars = options.maps[options.direction].charMap[0].split('');
+                    var toChars = options.maps[options.direction].charMap[1].split('');
+                    var charMap = {};
+                    for(var i = 0; i < fromChars.length; i++) {
+                        var c = i < toChars.length ? toChars[i] : fromChars[i];
+                        charMap[fromChars[i]] = c;
+                    };
+                    var re = new RegExp(fromChars.join("|"), "g");
+                    _text = _text.replace(re, function(c) {
+                        if (charMap[c]){
+                            return charMap[c];
+                        } else {
+                            return c;
+                        };
+                    });
+                };
+                return _text;
+            };
+            /**
+             * multiReplace - replaces all occurrences of all present elements of
+             * multiMap[0] with multiMap[1] in a string and returns the string
+             * @param String text
+             * @param Array[][] multiMap
+             */
+            function multiReplace(text, multiMap){
+                if (multiMap[0]){
+                    var len = multiMap[0].length;
+                    for(var i=0;i<len;i++){
+                        var tempReplacements = $(node).data('tempReplacements');
+                        var pattern = multiMap[0][i];
+                        var regex = new RegExp(pattern);
+                        var replacement = multiMap[1][i];
+                        if (replacement.match(regex)){
+                            var _tempReplacement = (new Date).getTime();
+                            while (_tempReplacement == (new Date).getTime()){
+                                _tempReplacement = _tempReplacement;
+                            };
+                            var _tempReplacements = tempReplacements;
+                            tempReplacements = [];
+                            for(var k=0; k<_tempReplacements.length;k++){
+                                if (_tempReplacements[k][0] == multiMap[0][i]){
+                                    continue
+                                } else {
+                                    tempReplacements.push(_tempReplacements[k]);
+                                };
+                            };
+                            tempReplacements.push([multiMap[0][i], _tempReplacement]);
+                            $(node).data('tempReplacements', tempReplacements);
+                            while(regex.test(text)){
+                                text = text.replace(regex, _tempReplacement);
+                            };
+                        } else if (pattern.match(new RegExp(replacement))){
+                            for(var j=0;j<tempReplacements.length;j++){
+                                var tempRegex = new RegExp(tempReplacements[j][1]);
+                                while(text.match(tempRegex)){
+                                    text = text.replace(tempRegex, tempReplacements[j][0]);
+                                };
+                            };
+                        };
+                        while(regex.test(text)){
+                            text = text.replace(regex, replacement);
+                        };
                     };
                 };
+                return text;
             };
-            return text;
-        }
+        });
     };
     /**
      * default option set for transliterate plugin

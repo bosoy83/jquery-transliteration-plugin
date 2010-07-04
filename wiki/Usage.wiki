@@ -57,8 +57,6 @@ The plugin comes with three possible transliteration directions:
   * *multiPre* is two-dimensional array used for pre-processing of entities that are not 1:1. For instance, in Serbian lanugage, cyrillic letter љ is in latin presented as lj, Situations like these made 1:1 transliterations impossible, so we have pre-processing and post processing for those entities. Again, all members from first member of the multiPre array will be replaced with correspodning member from the second member of the multiPre array.
   * *multiPost* is the same thing as multiPre. Only difference is that these apply *after* 1:1 transliteration has taken place.
 
-*WARNING*: members of first array in multiPre and multiPost are treated as regular expressions, so you must use all regular expression escape sequences. In addition you can define backreferences in multiPre or multiPost second array. However *make sure that you don't have same characters in patterns and replacements because it will cause an infinite loop* I hope I will find some time to fix and test this soon.
-
 You might have noticed that *direction* option can have same named values as members of *map* hash. Therefore, adding new types of transliteration is easy. You should copy one of the *map* hash members and edit it to suit your needs. You can pass *map* along with *direction* option to use your custom transliteration logic. For more information about the transliteration internals, check Transliteration mechanism page.
 
 ===Example==

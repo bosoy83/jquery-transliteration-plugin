@@ -6,18 +6,6 @@ However there are some specifics about the Serbian language (the one this plugin
 
 The transliteration process is done in three steps. First step is preprocessing. Last step is postprocessing. Those two are the same, except for one takes place before letter-to-letter transliteration is performed and another one takes place after. Those methods are used to replace entities that are not 1:1 eg. with that you can replace whole words before main processing takes place or after it finishes. This process can be controlled with options.maps.char_map_name.multiPre (multiPost for postprocessing) arrays. These arrays should consist of two inner arrays of the same length. Each element of the first array will be replaced with an element from the second array. Note that this is done using regular expressions, so it is possible to use escape sequences in patterns and backreferences in replacements. Also, try to avoid too complex and too long arrays for pre and post processing since they have large impact on plugin performance.
 
-One thing that can get the transliteration plugin to lock the browser (or tab) is using replacements that contain pattern. Let's take a look at the following example. We want to replace 
-{{{
-"sham"
-}}}
-with
-{{{
-"shampoo"
-}}}
-So, the plugin does first replacement. Lets say that our text is "My shamp is very good."
-in the first iteration, word "shamp" will get replaced with the word "shampoo". So now, our text is "My shampoo is very good". But, second time the plugin checks for word to replace it will find it within *shamp(oo).* So again, replacement is made and our text is 
-"My shampoooo is very good.". Next iteration will add two more o's at the end (since one more time "shamp" gets replaced by "shampoo") and so the infinite loop is born and user is forced to kill its browser or wait for it to kill itself :( So, avoid replacing similar words or try using pre and post combination to get it work. (for instance, when transliterating from latin to cyrillic, we can use preprocessing to change all occurences of shamp to __S_H_A_M_P__ and then in postprocessing convert __S_H_A_M_P__ back to shampoo to avoid browser locking. (note that postprocessing should use cyrillic letters (__С_Х_А_М_П__) although for simplicity they are here presented in latin)
-
 Second step is the transliteration of single characters, and a workhorse for the transliteration itself. It will copy all the characters from the replacement string over corresponding characters from source string. It is pretty straightforward, ie. if you supply:
 {{{
 'abcde'
